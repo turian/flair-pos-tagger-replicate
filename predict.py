@@ -37,7 +37,7 @@ class Predictor(BasePredictor):
         ),
     ) -> str:
         with torch.no_grad():
-            sentences = json.loads(sentence)
+            sentences = json.loads(sentences_json)
             if isinstance(sentences, list):
                 results = []
                 for sentence in sentences:
