@@ -1,12 +1,11 @@
 import base64
+import gzip
 import json
 import pickle
 from typing import Any
 
-import gzlib
-
 # import lz4
-import snappy
+# import snappy
 import torch
 from cog import BasePredictor, Input
 from flair.data import Sentence
@@ -33,7 +32,7 @@ class Predictor(BasePredictor):
             description="JSON of sentence strings (or individual sentence string) to POS tag"
         ),
         compression: str = Input(
-            description="Compression to use: none (default) / snappy / lz4 (unimplemented) / gzip",
+            description="Compression to use: none (default) / snappy (unimplemented) / lz4 (unimplemented) / gzip",
             default="none",
         ),
     ) -> str:
@@ -51,8 +50,8 @@ class Predictor(BasePredictor):
             pkl = pickle.dumps(results)
             if compression == "none":
                 pkl = pkl
-            elif compression == "snappy":
-                pkl = snappy.compress(pkl)
+            #            elif compression == "snappy":
+            #                pkl = snappy.compress(pkl)
             elif commpression == "gzip":
                 pkl = gzip.compress(pkl)
             else:
