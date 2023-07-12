@@ -1,8 +1,12 @@
 import base64
 import gzip
 import json
-import pickle
 from typing import Any
+
+try:
+    import cPickle as pickle
+except:
+    import pickle
 
 # import lz4
 # import snappy
@@ -20,6 +24,8 @@ class Predictor(BasePredictor):
         # TODO: Better to keep the model in the docker
         # self.tagger = SequenceTagger.load("flair/pos-english")
         self.tagger = SequenceTagger.load("pos-english/pytorch_model.bin")
+        if torch.cuda.is_available():
+            self.tagger = self.tagger.to("cuda")
 
     @staticmethod
     def str_to_sentence(text: str) -> Sentence:
@@ -29,7 +35,7 @@ class Predictor(BasePredictor):
     def predict(
         self,
         sentences_json: str = Input(
-            description="JSON of sentence strings (or individual sentence string) to POS tag"
+            description="JSON of list sentence strings, to POS tag and return base64 pickle of flair.Sentence"
         ),
         compression: str = Input(
             description="Compression to use: none (default) / snappy (unimplemented) / lz4 (unimplemented) / gzip",
@@ -37,6 +43,7 @@ class Predictor(BasePredictor):
         ),
     ) -> str:
         with torch.no_grad():
+            sentences = json.loads('"i love berlin"')
             sentences = json.loads(sentences_json)
             if isinstance(sentences, list):
                 results = []
@@ -44,9 +51,9 @@ class Predictor(BasePredictor):
                     sentence = Predictor.str_to_sentence(sentence)
                     self.tagger.predict(sentence)
                 results.append(sentence)
-            elif isinstance(sentences, str):
-                sentence = Predictor.str_to_sentence(sentences)
-                results = sentence
+            #            elif isinstance(sentences, str):
+            #                sentence = Predictor.str_to_sentence(sentences)
+            #                results = sentence
             else:
                 assert False, f"{type(sentences)}"
             pkl = pickle.dumps(results)
