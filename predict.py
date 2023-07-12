@@ -44,9 +44,11 @@ class Predictor(BasePredictor):
                     sentence = Predictor.str_to_sentence(sentence)
                     self.tagger.predict(sentence)
                 results.append(sentence)
-            else:
-                sentence = Predictor.str_to_sentence(sentence)
+            elif isinstance(sentences, str):
+                sentence = Predictor.str_to_sentence(sentences)
                 results = sentence
+            else:
+                assert False, f"{type(sentences)}"
             pkl = pickle.dumps(results)
             if compression == "none":
                 pkl = pkl
