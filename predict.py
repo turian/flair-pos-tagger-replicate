@@ -33,8 +33,8 @@ class Predictor(BasePredictor):
             description="JSON of sentence strings (or individual sentence string) to POS tag"
         ),
         compression: str = Input(
-            description="Compression to use: snappy (default) / none / lz4 (unimplemented) / gzip",
-            default="snappy",
+            description="Compression to use: none (default) / snappy / lz4 (unimplemented) / gzip",
+            default="none",
         ),
     ) -> str:
         with torch.no_grad():
