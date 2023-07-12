@@ -5,7 +5,9 @@ from flair.data import Sentence
 from flair.models import SequenceTagger
 from typing import Any
 import base64
-import lz4
+#import lz4
+import snappy
+import gzlib
 # TODO: Use safe pickle?
 
 
@@ -23,6 +25,7 @@ class Predictor(BasePredictor):
 
     def predict(self,
             sentences_json: str = Input(description="JSON of sentence strings (or individual sentence string) to POS tag")
+            compression: str = Input(description="Compression to use: snappy (default) / none / lz4 (unimplemented) / gzip", default="snappy")
     ) -> str:
         with torch.no_grad():
             sentences = json.loads(sentence)
@@ -35,4 +38,13 @@ class Predictor(BasePredictor):
             else:
                 sentence = Predictor.str_to_sentence(sentence)
                 results = sentence
-            return base64.b64encode(lz4.frame.compress(pickle.dumps(results)))
+            pkl = pickle.dumps(results)
+            if compression == "none"
+                pkl = pkl
+            elif compression = "snappy":
+                pkl = snappy.compress(pkl)
+            elif commpression = "gzip":
+                pkl = gzip.compress(pkl)
+            else:
+                assert False, f"Unknown compression: {compression}"
+            return base64.b64encode(pkl)
