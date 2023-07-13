@@ -36,10 +36,10 @@ class Predictor(BasePredictor):
         sentences_json: str = Input(
             description="JSON of list sentence strings, to POS tag and return base64 pickle of flair.Sentence"
         ),
-        compression: str = Input(
-            description="Compression to use: none (default) / snappy (unimplemented) / lz4 (unimplemented) / gzip",
-            default="none",
-        ),
+        # compression: str = Input(
+        #            description="Compression to use: none (default) / snappy (unimplemented) / lz4 (unimplemented) / gzip",
+        #            default="none",
+        #        ),
     ) -> str:
         with torch.no_grad():
             sentences = json.loads('"i love berlin"')
