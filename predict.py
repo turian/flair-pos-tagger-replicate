@@ -34,7 +34,7 @@ class Predictor(BasePredictor):
     def predict(
         self,
         sentences_json: str = Input(
-            description="JSON of list sentence strings, to POS tag and return base64 pickle of flair.Sentence"
+            description="JSON of list sentence strings, to POS tag and return list of JSON dicts of flair.Sentence"
         ),
         # compression: str = Input(
         #            description="Compression to use: none (default) / snappy (unimplemented) / lz4 (unimplemented) / gzip",
