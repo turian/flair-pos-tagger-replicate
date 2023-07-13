@@ -22,8 +22,6 @@ from flair.models import SequenceTagger
 class Predictor(BasePredictor):
     def setup(self):
         """Load the model into memory to make running multiple predictions efficient"""
-        # TODO: Better to keep the model in the docker
-        # self.tagger = SequenceTagger.load("flair/pos-english")
         self.tagger = SequenceTagger.load("pos-english/pytorch_model.bin")
         if torch.cuda.is_available():
             self.tagger = self.tagger.to("cuda")
