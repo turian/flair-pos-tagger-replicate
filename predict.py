@@ -1,12 +1,7 @@
-import base64
-import gzip
+# import base64
+# import gzip
 import json
 from typing import Any
-
-try:
-    import cPickle as pickle
-except:
-    import pickle
 
 # import lz4
 # import snappy
@@ -14,6 +9,12 @@ import torch
 from cog import BasePredictor, Input
 from flair.data import Sentence
 from flair.models import SequenceTagger
+
+# try:
+#    import cPickle as pickle
+# except:
+#    import pickle
+
 
 # TODO: Use safe pickle?
 
@@ -50,12 +51,26 @@ class Predictor(BasePredictor):
                 for sentence in sentences:
                     sentence = Predictor.str_to_sentence(sentence)
                     self.tagger.predict(sentence)
-                results.append(sentence)
+                    results.append(sentence)
             #            elif isinstance(sentences, str):
             #                sentence = Predictor.str_to_sentence(sentences)
             #                results = sentence
             else:
                 assert False, f"{type(sentences)}"
+
+            def sentence_to_dict(sentence: Sentence):
+                sentence_dict = sentence.to_dict()
+                sentence_dict["token positions"] = [
+                    (token.start_position, token.end_position) for token in sentence
+                ]
+                assert len(sentence_dict["token positions"]) == len(
+                    sentence_dict["all labels"]
+                )
+                return sentence_dict
+
+            results_dict = [sentence_to_dict(sentence) for sentence in results]
+            return json.dumps(results_dict)
+            """
             pkl = pickle.dumps(results)
             if compression == "none":
                 pkl = pkl
@@ -66,3 +81,4 @@ class Predictor(BasePredictor):
             else:
                 assert False, f"Unknown compression: {compression}"
             return base64.b64encode(pkl)
+            """
